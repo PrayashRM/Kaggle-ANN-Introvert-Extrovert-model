@@ -1,10 +1,641 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introvert vs Extrovert Classification</title>
-    <style>
+<body>
+
+<h1 align="center">🧠 Introvert vs Extrovert Classification</h1>
+
+<p align="center">
+  <b>Deep Learning | Personality Prediction | PyTorch | Neural Networks</b><br>
+  Artificial Neural Network built <b>from scratch</b> using <b>PyTorch</b> for personality classification with <b>98.14% accuracy</b> 🎯
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/PyTorch-orange?logo=pytorch" alt="PyTorch">
+  <img src="https://img.shields.io/badge/Accuracy-98.14%25-brightgreen" alt="Accuracy">
+  <img src="https://img.shields.io/badge/Optuna-Optimized-purple" alt="Optuna">
+  <img src="https://img.shields.io/badge/Status-Completed-success" alt="Status">
+</p>
+
+<hr>
+
+<h2>🚀 Overview</h2>
+
+<p>
+A sophisticated Artificial Neural Network (ANN) built from scratch using <b>PyTorch</b> to classify personality types as either <b>Introvert</b> or <b>Extrovert</b> based on behavioral features. This project was developed for a <b>Kaggle competition</b> and demonstrates advanced techniques including hyperparameter optimization with <b>Optuna</b>, custom data preprocessing, and strategic model architecture design.
+</p>
+
+<hr>
+
+<h2>🎯 Key Features</h2>
+
+<ul>
+  <li>✨ <b>Custom ANN Architecture</b> - 2-layer neural network designed specifically for personality classification</li>
+  <li>🔧 <b>Hyperparameter Optimization</b> - Systematic tuning using Optuna (1000+ trials)</li>
+  <li>📊 <b>Smart Data Preprocessing</b> - Class-wise mean imputation for missing values</li>
+  <li>🎯 <b>High Accuracy</b> - Achieved 98.14% accuracy on test set</li>
+  <li>⏸️ <b>Early Stopping Implementation</b> - Prevents overfitting with patience-based monitoring</li>
+  <li>💾 <b>Model Checkpointing</b> - Automatic saving of best performing models</li>
+  <li>📈 <b>Comprehensive Evaluation</b> - F1 Score: 0.9725</li>
+  <li>🔥 <b>GPU Acceleration</b> - CUDA support for faster training</li>
+</ul>
+
+<hr>
+
+<h2>📊 Dataset & Performance</h2>
+
+<table align="center">
+  <tr>
+    <th>Metric</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td><b>Test Accuracy</b></td>
+    <td>98.14%</td>
+  </tr>
+  <tr>
+    <td><b>F1 Score (Weighted)</b></td>
+    <td>0.9725</td>
+  </tr>
+  <tr>
+    <td><b>Validation Accuracy</b></td>
+    <td>97.25%</td>
+  </tr>
+  <tr>
+    <td><b>Training Samples</b></td>
+    <td>18,524</td>
+  </tr>
+  <tr>
+    <td><b>Test Samples</b></td>
+    <td>6,175</td>
+  </tr>
+  <tr>
+    <td><b>Features</b></td>
+    <td>7 behavioral indicators</td>
+  </tr>
+</table>
+
+<h3>Class Distribution:</h3>
+<ul>
+  <li><b>Extroverts:</b> 13,699 samples (73.9%)</li>
+  <li><b>Introverts:</b> 4,825 samples (26.1%)</li>
+</ul>
+
+<hr>
+
+<h2>🧩 Features Used</h2>
+
+<p>The model analyzes <b>7 carefully selected behavioral features</b> to predict personality type:</p>
+
+<table align="center">
+  <tr>
+    <th>Feature</th>
+    <th>Description</th>
+    <th>Range</th>
+  </tr>
+  <tr>
+    <td><b>Time Spent Alone</b></td>
+    <td>Hours per day spent alone</td>
+    <td>0-11</td>
+  </tr>
+  <tr>
+    <td><b>Stage Fear</b></td>
+    <td>Presence of public speaking anxiety</td>
+    <td>Binary (Yes/No)</td>
+  </tr>
+  <tr>
+    <td><b>Social Event Attendance</b></td>
+    <td>Frequency of attending social gatherings</td>
+    <td>0-10</td>
+  </tr>
+  <tr>
+    <td><b>Going Outside</b></td>
+    <td>Days per week spent outdoors</td>
+    <td>0-7</td>
+  </tr>
+  <tr>
+    <td><b>Drained After Socializing</b></td>
+    <td>Feeling exhausted after social interaction</td>
+    <td>Binary (Yes/No)</td>
+  </tr>
+  <tr>
+    <td><b>Friends Circle Size</b></td>
+    <td>Number of close friends</td>
+    <td>0-15</td>
+  </tr>
+  <tr>
+    <td><b>Post Frequency</b></td>
+    <td>Social media posting activity</td>
+    <td>0-10</td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>🏗️ Model Architecture</h2>
+
+<p>Optimized 2-layer neural network with batch normalization and dropout regularization:</p>
+
+<pre><code>class NNArch(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # Layer 1
+        self.fc1 = nn.Linear(7, 64)
+        self.bn1 = nn.BatchNorm1d(64)
+        self.drop1 = nn.Dropout(0.114)
+
+        # Layer 2
+        self.fc2 = nn.Linear(64, 128)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.drop2 = nn.Dropout(0.233)
+
+        # Output Layer
+        self.out = nn.Linear(128, 2)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.drop1(x)
+
+        x = self.fc2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        x = self.drop2(x)
+
+        x = self.out(x)
+        return x
+</code></pre>
+
+<h3>Architecture Flow:</h3>
+<ul>
+  <li><b>Input Layer:</b> 7 behavioral features</li>
+  <li><b>Hidden Layer 1:</b> 64 neurons + BatchNorm + ReLU + Dropout(11.4%)</li>
+  <li><b>Hidden Layer 2:</b> 128 neurons + BatchNorm + ReLU + Dropout(23.3%)</li>
+  <li><b>Output Layer:</b> 2 classes (Introvert/Extrovert)</li>
+  <li><b>Total Parameters:</b> ~11,000</li>
+</ul>
+
+<hr>
+
+<h2>🔧 Data Preprocessing Pipeline</h2>
+
+<h3>1. Missing Value Handling</h3>
+<p><b>Smart Class-wise Imputation:</b></p>
+<pre><code># For training set: class-wise means
+for feature in features:
+    mean_intro = train[train['Personality'] == 1][feature].mean()
+    mean_extro = train[train['Personality'] == 0][feature].mean()
+    
+    train.loc[(train['Personality'] == 1) & (train[feature].isnull()), feature] = mean_intro
+    train.loc[(train['Personality'] == 0) & (train[feature].isnull()), feature] = mean_extro
+
+# For test set: average of both class means
+    avg_mean = (mean_intro + mean_extro) / 2
+    test[feature] = test[feature].fillna(avg_mean)
+</code></pre>
+
+<h3>2. Feature Encoding</h3>
+<table align="center">
+  <tr>
+    <th>Feature</th>
+    <th>Original</th>
+    <th>Encoded</th>
+  </tr>
+  <tr>
+    <td>Stage Fear</td>
+    <td>No / Yes</td>
+    <td>0 / 1</td>
+  </tr>
+  <tr>
+    <td>Drained After Socializing</td>
+    <td>No / Yes</td>
+    <td>0 / 1</td>
+  </tr>
+  <tr>
+    <td>Personality</td>
+    <td>Extrovert / Introvert</td>
+    <td>0 / 1</td>
+  </tr>
+</table>
+
+<h3>3. Min-Max Normalization</h3>
+<pre><code>for feature in ['Time_spent_Alone', 'Social_event_attendance', 
+                'Going_outside', 'Friends_circle_size', 'Post_frequency']:
+    min_val = train[feature].min()
+    max_val = train[feature].max()
+    train[feature] = (train[feature] - min_val) / (max_val - min_val)
+    test[feature] = (test[feature] - min_val) / (max_val - min_val)
+</code></pre>
+
+<hr>
+
+<h2>⚙️ Training Configuration</h2>
+
+<h3>Optimal Hyperparameters (Found via Optuna):</h3>
+<table align="center">
+  <tr>
+    <th>Parameter</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td><b>Learning Rate</b></td>
+    <td>0.00133</td>
+  </tr>
+  <tr>
+    <td><b>Weight Decay</b></td>
+    <td>1e-05</td>
+  </tr>
+  <tr>
+    <td><b>Batch Size</b></td>
+    <td>128</td>
+  </tr>
+  <tr>
+    <td><b>Optimizer</b></td>
+    <td>Adam</td>
+  </tr>
+  <tr>
+    <td><b>Loss Function</b></td>
+    <td>CrossEntropyLoss</td>
+  </tr>
+  <tr>
+    <td><b>Activation</b></td>
+    <td>ReLU</td>
+  </tr>
+  <tr>
+    <td><b>Max Epochs</b></td>
+    <td>6000</td>
+  </tr>
+  <tr>
+    <td><b>Early Stopping Patience</b></td>
+    <td>7 epochs</td>
+  </tr>
+</table>
+
+<h3>Data Split:</h3>
+<ul>
+  <li><b>Training Set:</b> 70% (~12,966 samples)</li>
+  <li><b>Validation Set:</b> 21% (~3,890 samples)</li>
+  <li><b>Test Set:</b> 9% (~1,668 samples)</li>
+</ul>
+
+<hr>
+
+<h2>🎨 Hyperparameter Optimization with Optuna</h2>
+
+<p>Conducted <b>1000+ trials</b> to find optimal configuration:</p>
+
+<h3>Search Space:</h3>
+<pre><code>trial.suggest_int('num_of_layers', 1, 3)
+trial.suggest_categorical('hidden1', [64, 128, 256])
+trial.suggest_categorical('hidden2', [64, 128, 256])
+trial.suggest_categorical('hidden3', [16, 32, 64])
+trial.suggest_float('dropout1', 0.1, 0.5)
+trial.suggest_float('dropout2', 0.1, 0.5)
+trial.suggest_float('dropout3', 0.1, 0.5)
+trial.suggest_float('learning_rate', 1e-4, 1e-1, log=True)
+trial.suggest_categorical('weight_decay', [1e-5, 5e-5, 1e-4, 5e-4, 1e-3])
+trial.suggest_categorical('batch_size', [16, 32, 64, 128])
+trial.suggest_categorical('optimizer', ['Adam', 'SGD', 'RMSprop'])
+trial.suggest_categorical('activation', ['relu', 'leakyrelu', 'elu'])
+</code></pre>
+
+<h3>Best Trial Results:</h3>
+<ul>
+  <li>🏆 <b>Accuracy:</b> 98.14%</li>
+  <li>🎯 <b>Architecture:</b> 2 layers (7 → 64 → 128 → 2)</li>
+  <li>⚡ <b>Optimizer:</b> Adam</li>
+  <li>🔥 <b>Activation:</b> ReLU</li>
+</ul>
+
+<hr>
+
+<h2>🛠️ Technologies & Dependencies</h2>
+
+<h3>Core Libraries:</h3>
+<pre><code>import torch
+from torch import nn
+from torch.optim import Adam
+from torch.utils.data import Dataset, DataLoader
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, accuracy_score
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import optuna
+
+# Google Colab specific
+from google.colab import drive, files
+</code></pre>
+
+<h3>Required Packages:</h3>
+<p align="center">
+  🔥 PyTorch • 📊 Pandas • 🧮 NumPy • 📈 Scikit-learn • 🎨 Matplotlib • 🔧 Optuna
+</p>
+
+<hr>
+
+<h2>📦 Installation & Setup</h2>
+
+<h3>1. Install Dependencies</h3>
+<pre><code>pip install torch pandas numpy scikit-learn matplotlib optuna
+</code></pre>
+
+<h3>2. For Google Colab</h3>
+<pre><code># Mount Google Drive
+from google.colab import drive
+drive.mount('/content/drive', force_remount=True)
+
+# Check GPU availability
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print("Device available:", device)
+</code></pre>
+
+<h3>3. Clone Repository</h3>
+<pre><code>git clone https://github.com/yourusername/introvert-extrovert-classifier.git
+cd introvert-extrovert-classifier
+</code></pre>
+
+<hr>
+
+<h2>🚀 Usage</h2>
+
+<h3>1. Training the Model</h3>
+<pre><code># Initialize model
+model = NNArch()
+model.to(device)
+
+# Define loss and optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = Adam(model.parameters(), lr=0.00133, weight_decay=1e-05)
+
+# Train with early stopping
+# See notebook for complete training loop
+</code></pre>
+
+<h3>2. Load Pre-trained Model</h3>
+<pre><code># Load best saved model
+model = NNArch()
+model.load_state_dict(torch.load('best_model_optuna.pth'))
+model.to(device)
+model.eval()
+</code></pre>
+
+<h3>3. Make Predictions</h3>
+<pre><code># Prepare input data (normalized and encoded)
+x_tensor = torch.tensor(input_data, dtype=torch.float32)
+x_tensor = x_tensor.to(device)
+
+with torch.no_grad():
+    predictions = model(x_tensor)
+    predicted_class = torch.argmax(predictions, dim=1)
+    
+    # 0 = Extrovert, 1 = Introvert
+    personality = 'Extrovert' if predicted_class == 0 else 'Introvert'
+    print(f"Predicted Personality: {personality}")
+</code></pre>
+
+<hr>
+
+<h2>📁 Project Structure</h2>
+
+<pre><code>Introvert-Extrovert-Classification/
+│
+├── Introvert_Extrovert_prediction.ipynb   # Complete implementation
+├── README.md                               # Documentation
+│
+├── data/
+│   ├── train.csv                          # Training dataset
+│   └── test.csv                           # Test dataset
+│
+├── Saved_Models/
+│   ├── Project08_Introvert_Extrovert_bestmodel_optuna.pth    # Best model
+│   └── Project08_Introvert_Extrovert_currentmodel.pth        # Latest checkpoint
+│
+├── Introvert_Extrovert_Project08_study.db   # Optuna study database
+├── submission.csv                            # Kaggle submission
+└── requirements.txt                          # Dependencies
+</code></pre>
+
+<hr>
+
+<h2>🔑 Key Implementation Details</h2>
+
+<h3>Custom Dataset Class</h3>
+<pre><code>class customdataset(Dataset):
+    def __init__(self, X, Y):
+        self.X = torch.tensor(X.values, dtype=torch.float32)
+        self.Y = torch.tensor(Y.values, dtype=torch.float32)
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, index):
+        return self.X[index], self.Y[index]
+</code></pre>
+
+<h3>Early Stopping Mechanism</h3>
+<pre><code>best_val_loss = float('inf')
+patience = 7
+wait = 0
+
+for epoch in range(epochs):
+    # Training and validation...
+    
+    if avg_validation_loss < best_val_loss:
+        best_val_loss = avg_validation_loss
+        wait = 0
+        torch.save(model.state_dict(), current_model_path)
+    else:
+        wait += 1
+        if wait >= patience:
+            print(f"⛔ Early stopping at epoch {epoch + 1}")
+            break
+</code></pre>
+
+<h3>Device Configuration</h3>
+<pre><code>device = "cuda" if torch.cuda.is_available() else "cpu"
+print("Device available:", device)
+
+# Move model and data to GPU
+model.to(device)
+x_batch = x_batch.to(device).float()
+y_batch = y_batch.to(device).long()
+</code></pre>
+
+<hr>
+
+<h2>📈 Training Progress</h2>
+
+<h3>Training Metrics:</h3>
+<ul>
+  <li><b>Epochs Trained:</b> 13 (out of max 6000)</li>
+  <li><b>Early Stopping Triggered:</b> Epoch 13</li>
+  <li><b>Final Training Loss:</b> ~0.088</li>
+  <li><b>Final Validation Loss:</b> ~0.111</li>
+  <li><b>Test Loss:</b> 0.1145</li>
+  <li><b>Test Accuracy:</b> 98.14%</li>
+</ul>
+
+<p>The model converged quickly thanks to optimal hyperparameters found through Optuna optimization.</p>
+
+<hr>
+
+<h2>🎯 Model Performance Analysis</h2>
+
+<h3>Strengths:</h3>
+<ul>
+  <li>✅ Exceptional accuracy (98.14%) on unseen test data</li>
+  <li>✅ High F1 score (0.9725) indicating balanced precision and recall</li>
+  <li>✅ Fast convergence with early stopping (13 epochs)</li>
+  <li>✅ Handles class imbalance effectively</li>
+  <li>✅ Lightweight architecture (~11K parameters)</li>
+  <li>✅ Low overfitting risk with batch normalization and dropout</li>
+  <li>✅ Robust preprocessing pipeline</li>
+</ul>
+
+<h3>Technical Highlights:</h3>
+<ul>
+  <li>🎯 Class-wise mean imputation improved model generalization</li>
+  <li>📊 Min-max normalization ensured feature scale consistency</li>
+  <li>🔄 Batch normalization stabilized training</li>
+  <li>⚡ Adam optimizer with optimal learning rate</li>
+  <li>🏆 Systematic hyperparameter tuning with Optuna</li>
+</ul>
+
+<hr>
+
+<h2>🔮 Future Enhancements</h2>
+
+<ul>
+  <li>🚀 <b>Web Deployment:</b> Flask/Streamlit app with interactive questionnaire</li>
+  <li>📱 <b>Mobile App:</b> Convert to ONNX/TFLite format for mobile deployment</li>
+  <li>🎨 <b>Feature Engineering:</b> Explore interaction features and polynomial terms</li>
+  <li>🏗️ <b>Advanced Architectures:</b> Experiment with attention mechanisms</li>
+  <li>📊 <b>Ensemble Methods:</b> Combine multiple models for higher accuracy</li>
+  <li>🔄 <b>Cross-validation:</b> K-fold CV for more robust evaluation</li>
+  <li>💡 <b>Explainability:</b> SHAP values to understand feature importance</li>
+  <li>🌐 <b>Multi-class Extension:</b> Classify into MBTI personality types</li>
+</ul>
+
+<hr>
+
+<h2>📝 Notebook Features</h2>
+
+<p>The complete Jupyter notebook includes:</p>
+
+<ol>
+  <li>📥 <b>Data Loading:</b> CSV import and initial exploration</li>
+  <li>🔍 <b>Data Analysis:</b> Statistics and distribution analysis</li>
+  <li>🧹 <b>Data Cleaning:</b> Missing value handling and duplicate removal</li>
+  <li>🎨 <b>Preprocessing:</b> Encoding, normalization, and splitting</li>
+  <li>🏗️ <b>Model Definition:</b> Custom ANN architecture</li>
+  <li>🎓 <b>Training Loop:</b> With early stopping and checkpointing</li>
+  <li>📊 <b>Evaluation:</b> Comprehensive metrics (accuracy, F1 score)</li>
+  <li>📈 <b>Visualization:</b> Loss curves over epochs</li>
+  <li>🔧 <b>Hyperparameter Tuning:</b> Optuna optimization (1000+ trials)</li>
+  <li>💾 <b>Model Persistence:</b> Save and load functionality</li>
+  <li>🧪 <b>Kaggle Submission:</b> Test set prediction and CSV export</li>
+</ol>
+
+<hr>
+
+<h2>⚠️ Important Notes</h2>
+
+<ul>
+  <li>🔧 <b>GPU Recommended:</b> CPU training will be significantly slower</li>
+  <li>💾 <b>Google Drive:</b> Models are saved in Google Drive when using Colab</li>
+  <li>📏 <b>Input Requirements:</b> Features must be preprocessed (normalized & encoded)</li>
+  <li>🎯 <b>Binary Classification:</b> Model outputs Introvert (1) or Extrovert (0)</li>
+  <li>🔄 <b>Preprocessing Consistency:</b> New data needs same transformations as training</li>
+  <li>📊 <b>Class Imbalance:</b> Model trained on imbalanced data (73.9% Extroverts)</li>
+</ul>
+
+<hr>
+
+<h2>🐛 Troubleshooting</h2>
+
+<h3>Common Issues:</h3>
+
+<p><b>Issue:</b> CUDA out of memory</p>
+<pre><code># Solution: Reduce batch size
+batch_size = 64  # Instead of 128
+</code></pre>
+
+<p><b>Issue:</b> Model not loading</p>
+<pre><code># Solution: Check device consistency
+model = NNArch()
+model.load_state_dict(torch.load('model.pth', map_location=device))
+</code></pre>
+
+<p><b>Issue:</b> Poor predictions on new data</p>
+<pre><code># Solution: Ensure proper preprocessing
+# 1. Encode categorical features (Stage_fear, Drained_after_socializing)
+# 2. Normalize continuous features using training set min/max
+# 3. Handle missing values with appropriate strategy
+</code></pre>
+
+<p><b>Issue:</b> Optuna study not loading</p>
+<pre><code># Solution: Check database path and permissions
+study = optuna.create_study(
+    direction='maximize',
+    study_name='Introvert_Extrovert_Project08_study',
+    storage='sqlite:///path/to/study.db',
+    load_if_exists=True
+)
+</code></pre>
+
+<hr>
+
+<h2>📚 Learning Resources</h2>
+
+<ul>
+  <li>📖 <a href="https://pytorch.org/tutorials/">PyTorch Official Tutorials</a></li>
+  <li>📖 <a href="https://optuna.readthedocs.io/">Optuna Documentation</a></li>
+  <li>📖 <a href="https://scikit-learn.org/stable/modules/preprocessing.html">Scikit-learn Preprocessing Guide</a></li>
+  <li>📖 <a href="https://www.kaggle.com/learn">Kaggle Learn</a></li>
+</ul>
+
+<hr>
+
+<h2>👨‍💻 Author</h2>
+
+<p align="center">
+  <b>Prayash Ranjan Mohanty</b><br>
+  B.Tech in Computer Science (AI & ML)<br>
+  Kalinga Institute of Industrial Technology, Bhubaneswar<br>
+  📧 <a href="mailto:prayashranjanmohanty11@gmail.com">prayashranjanmohanty11@gmail.com</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/prayashmohanty">
+    <img src="https://img.shields.io/badge/GitHub-PrayashRanjanMohanty-black?logo=github" alt="GitHub">
+  </a>
+</p>
+
+<hr>
+
+<h2>🙏 Acknowledgments</h2>
+
+<ul>
+  <li>📚 <b>Kaggle:</b> For hosting the competition and providing the dataset</li>
+  <li>🔥 <b>PyTorch Team:</b> For the exceptional deep learning framework</li>
+  <li>🔧 <b>Optuna Team:</b> For the powerful hyperparameter optimization framework</li>
+  <li>🎓 <b>KIIT University:</b> For academic guidance and resources</li>
+  <li>💡 <b>Open Source Community:</b> For inspiration and learning resources</li>
+</ul>
+
+<hr>
+
+<p align="center">
+  <b>⭐ If you found this project helpful, please consider giving it a star! ⭐</b><br>
+  <i>Made with ❤️ using PyTorch and Optuna</i>
+</p>
+
+</body>
+</html>
         * {
             margin: 0;
             padding: 0;
