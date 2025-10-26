@@ -512,7 +512,7 @@ study = optuna.create_study(
 </p>
 
 <p align="center">
-  <a href="https://github.com/prayashmohanty">
+  <a href="https://github.com/PrayashRM">
     <img src="https://img.shields.io/badge/GitHub-PrayashRanjanMohanty-black?logo=github" alt="GitHub">
   </a>
 </p>
